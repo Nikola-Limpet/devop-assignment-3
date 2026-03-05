@@ -57,6 +57,32 @@ app.post('/order', (req, res) => {
   });
 });
 
+ // PUT /order/:id - Update an existing order
+  app.put('/order/:id', (req, res) => {
+    const { id } = req.params;
+    const { item, quantity } = req.body;
+    res.json({
+      success: true,
+      message: `Order ${id} updated successfully!`,
+      order: {
+        id: parseInt(id),
+        item: item || 'Updated Item',
+        quantity: quantity || 1,
+        status: 'Updated'
+      }
+    });
+  });
+
+  // DELETE /order/:id - Cancel an order
+  app.delete('/order/:id', (req, res) => {
+    const { id } = req.params;
+    res.json({
+      success: true,
+      message: `Order ${id} cancelled successfully!`
+    });
+  });
+
+
 app.listen(PORT, () => {
   console.log(`FoodExpress API is running on http://localhost:${PORT}`);
 });
