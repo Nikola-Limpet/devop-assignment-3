@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/YOUR_USERNAME/foodexpress-api.git'
+                git branch: 'main', url: 'https://github.com/Nikola-Limpet/devop-assignment-3.git'
             }
         }
 
