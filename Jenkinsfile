@@ -1,36 +1,55 @@
 pipeline {
-    agent any
+    agent { label 'agen1' }
+
+    environment {
+        APP_NAME = 'node-api-container'
+        IMAGE_NAME = 'node-api-image'
+        APP_PORT = '3000'
+        REPO_URL = 'https://github.com/Nikola-Limpet/devop-assignment-3.git'
+    }
 
     stages {
-        stage('Checkout') {
+        stage('Clean Workspace') {
             steps {
-                git branch: 'main', url: 'https://github.com/Nikola-Limpet/devop-assignment-3.git'
+                deleteDir()
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Checkout Code') {
             steps {
-                sh 'npm install'
+                git branch: 'main', url: "${REPO_URL}"
             }
         }
 
-        stage('Test') {
+        stage('Show Workspace') {
             steps {
-                sh 'npm test'
+                sh 'echo WORKSPACE=$WORKSPACE'
+                sh 'pwd'
+                sh 'ls -la'
             }
         }
 
-        stage('Docker Build') {
+        stage('Build Docker Image') {
             steps {
-                sh 'docker build -t foodexpress-api .'
+                sh 'docker build -t ${IMAGE_NAME}:latest .'
             }
         }
 
-        stage('Deploy') {
+        stage('Remove Old Container') {
             steps {
-                sh 'docker stop foodexpress-api || true'
-                sh 'docker rm foodexpress-api || true'
-                sh 'docker run -d --name foodexpress-api -p 5000:5000 foodexpress-api'
+                sh 'docker rm -f ${APP_NAME} || true'
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                sh 'docker run -d --name ${APP_NAME} -p ${APP_PORT}:3000 ${IMAGE_NAME}:latest'
+            }
+        }
+
+        stage('Verify Container') {
+            steps {
+                sh 'docker ps'
             }
         }
     }
